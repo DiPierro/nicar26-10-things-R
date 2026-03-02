@@ -30,4 +30,4 @@ packages <-
   )
 
 # Installs
-install.packages(packages)
+install.packages(packages, repos = "http://cran.us.r-project.org")
