@@ -1,0 +1,119 @@
+# 7: Mail merge
+
+
+## Turning a spreadsheet of potential sources into customized emails
+
+If you keep well-organized spreadsheets of potential sources’ email
+addresses – or if there are public directories of contact emails for
+potential sources that you *could* turn into a spreadsheet – [mail
+merge](https://support.google.com/mail/answer/12921167?hl=en) can help
+you to avoid copying and pasting versions of the same email to dozens of
+people. Instead, you can send as many customized emails as you need to
+send with a single click.
+
+If you’re already working in R – or want more control and
+reproducibility in your mail merge work flow – this demo will show you
+how to mail merge using R code.
+
+> Note: This post is adapted from my [sporadically-updated code
+> blog](https://dipierro.github.io/updates/mail-merge/). And please mail
+> merge responsibly, avoiding spammy emails that will discourage rather
+> than encourage people to speak with you.
+
+## Configuring Gmail
+
+- Set up [two-factor
+  authentication](https://support.google.com/accounts/answer/185839?hl=en&co=GENIE.Platform%3DDesktop).
+
+- [Create an app
+  password](https://support.google.com/mail/answer/185833?hl=en).
+
+- Stash your password in an .Renviron file with the environmental
+  variable `GMAIL_APP_PW` and `usethis::edit_r_environ()`.
+
+## Formatting emails
+
+Next, create an email template and use string substitution to customize
+each message. I’ve created a little toy data for this purpose, but you
+can read in a spreadsheet instead.
+
+``` r
+# Libraries
+library(purrr)
+library(curl)
+library(stringr)
+
+# Parameters
+pw <- Sys.getenv("GMAIL_APP_PW") 
+sender <- "adipierro@edsource.org"
+
+# Code
+
+## Recipients
+recipients <- 
+  tibble::tribble(
+    ~first_name, ~last_name,    ~email, ~employer,
+    "Amy",  "DiPierro", "adipierro@edsource.org",   "EdSource",
+    "Mya", "DePriori",  "adipierro@edsource.org",   "CodeUser",
+  )
+
+## Write an email template
+template <- "
+From: 'Amy DiPierro' <adipierro@edsource.org>
+To: '{first_name} {last_name}' <{email}>
+Subject: Hello, {first_name}!
+
+Dear {first_name},
+
+How's it going at {employer}?
+
+Cheers,
+Amy
+"
+
+# Use string formatting to customize each email.
+message <- recipients %>% str_glue_data(template)
+
+# Extract list of recipients' emails
+emails <- recipients %>% dplyr::pull(email)
+```
+
+Here’s an example of how the email template looks after string
+formatting:
+
+    From: 'Amy DiPierro' <adipierro@edsource.org>
+    To: 'Mya DePriori' <adipierro@edsource.org>
+    Subject: Hello, Mya!
+
+    Dear Mya,
+
+    How's it going at CodeUser?
+
+    Cheers,
+    Amy
+
+## Sending emails
+
+Finally, just use the `send_mail` function from R’s `curl` library to
+email each customized message to the right recipient. The code below
+loops through two lists of customized messages and email addresses using
+the `purrr` function `map2`.
+
+``` r
+# Send all emails
+map2(
+  .x = message,
+  .y = emails,
+  .f = ~ send_mail(
+    mail_from = sender,
+    mail_rcpt = .y,
+    message = .x,
+    smtp_server = "smtps://smtp.gmail.com",
+    username = sender,
+    password  = pw,
+    verbose = FALSE
+  )
+)
+```
+
+Within a few moments, your test emails should arrive in your email.

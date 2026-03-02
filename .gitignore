@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.httr-oauth
+.Renviron
+.Rproj
+.duckdb
+.mp3
+.DS_Store
+sample-pdfs.zip
+pdfs/
+sample-pdfs/

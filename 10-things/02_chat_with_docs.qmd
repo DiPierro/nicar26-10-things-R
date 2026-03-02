@@ -1,0 +1,148 @@
+---
+title: "2: Chat with your documents"
+format: gfm
+---
+
+## What's RAG? Using R and AI to chat with your documents
+
+We all know that large language models (LLMs) can hallucinate, give generic answers to specific questions or extrapolate from out-of-date information. The idea behind Retrieval-Augmented Generation (RAG) is to combine what the LLM already knows -- the gobs of data it was trained on -- with specific new context we send to it, such as documents or data. This way, when we ask a question, the LLM can retrieve relevant information from the new context we've provided.
+
+In this module, we'll walk through a brief example that demonstrates how to use RAG to chat with documents using the R package `ragnar`.
+
+> If you're on your laptop, don't forget to install ellmer and ragnar: install.packages("ragnar", "ellmer"). And check out `01_coding_assistant.qmd` for a refresher on downloading Ollama.
+
+## Example: California's Bureau for Private Postsecondary Education
+
+California's Bureau for Private Postsecondary Education is the consumer protection agency that regulates and oversees certain private colleges and other postsecondary programs such as beauty and trucking schools. Here's its [mission statement](https://www.bppe.ca.gov/about_us/):
+
+> The Bureau protects students and consumers in California and beyond, through the oversight of California's private postsecondary educational institutions, by conducting qualitative reviews of educational programs and operating standards, proactively combating unlicensed activity, impartially resolving student and consumer complaints, and providing support and financial relief to harmed students.
+
+The Bureau publishes PDFs describing [disciplinary actions](https://www.bppe.ca.gov/enforcement/disciplinary_actions.shtml) on its website. These documents may shed light on how schools are treating students and what the Bureau is doing to hold them accountable. They typically explain the factual allegations leading to discipline and how a case was resolved, among other important details. The folder `sample-pdfs` includes a very small sample of the type of disciplinary documents typically published by the Bureau.
+
+## Hello, ragnar
+
+To get started, open up the Terminal or another bash shell and pull an [embedding model from Ollama](https://ollama.com/search?c=embedding) using a command like `ollama pull embeddinggemma`.
+
+In the code below, we create an empty knowledge store. This is where we'll stash the documents we want `ragnar` to reference later.
+
+```{r}
+library(ragnar)
+
+# Set parameter for the model
+# Choose a different one from ollama if you like
+model_embed <- "embeddinggemma"
+
+# Set up DuckDB storage
+store_location_demo <- "bppe-demo.ragnar.duckdb"
+
+store <- 
+  ragnar_store_create(
+    store_location_demo,
+    embed = \(x) embed_ollama(x, model = model_embed),
+    overwrite = TRUE # If you need to run more than once
+  )
+```
+
+For the purpose of this demo, we'll only select the first 10 documents and ingest them into the knowledge store, which is a [DuckDB database](https://duckdb.org/). 
+
+```{r}
+# Generate a list of sample PDFs
+dir_pdf <- here::here("sample-pdfs")
+pdfs <- list.files(dir_pdf, full.names = TRUE)
+
+# Ingest pages into DuckDB
+
+# Loop through the first 10 PDFs
+for (pdf in pdfs[1:10]) {
+  message("ingesting: ", pdf)
+  chunks <- 
+    pdf |> 
+    # Convert each PDF into markdown; this all can use URLs as input!
+    read_as_markdown() |> 
+    # Intelligently split each document into shorter, overlapping pieces.
+    # This can be tailored in various ways, including to make the chunks larger or smaller 
+    markdown_chunk()
+  # Insert chunks into the empty store
+  ragnar_store_insert(store, chunks)
+}
+
+```
+
+> Note: Under the hood, `ragnar` is running a bunch of packages that python users might already use, such as `pandas` and `pdfminer-six`.
+
+Before we can retrieve documents in answer to a query, we have to create a search index. That's just one more line of code.
+
+```{r}
+# Build index
+ragnar_store_build_index(store)
+
+# If you already have a store, you can read it in like this 
+# store <- ragnar_store_connect(store_location_demo, read_only = TRUE)
+```
+
+## Trying out retrieval
+
+The hard part is over. Now, it's time to interview some documents!
+
+```{r}
+# Query index
+response <- ragnar_retrieve(store, "Which institution faced the most serious disciplinary action?")
+response
+```
+
+Let's explore this response. Here's a few things to notice:
+
+* `ragnar` has returned five chunks from two different documents. We can see their titles in the column `origin`.
+* We can read the underlying chunk text in the column `text`.
+* `ragnar` also computes [Best Matching 25](http://en.wikipedia.org/wiki/Okapi_BM25) (`bm25`), a ranking function used by search engines to estimate relevance to our query, and [cosine distance](https://www.ibm.com/think/topics/cosine-similarity).
+
+We can inspect the most-relevant text returned like this:
+
+```{r}
+response$text[1]
+```
+
+Try some other queries on your own. Perhaps something like:
+
+* Which investigations had to do with teaching in a language other than English without approval?
+* How frequently does the Bureau start an investigation because of a tip or a complaint?
+
+> Warning: There's no substitute for reading complicated documents like these. RAG is not a cure-all against LLMs making mistakes.
+
+## Combining ragnar and ellmer
+
+One of the nicest features of `ragnar` is that it integrates nicely with another AI for R library, `ellmer`. We can use a free and open model from Ollama to chat with our documents, but I've gotten the best results with the free tier from Google Gemini and Anthropic's Claude.
+
+> You can set your ANTHROPIC_API_KEY environment variable with usethis::edit_r_environ(). You'll also need to create a Claude account and buy some credits. 
+
+```{r}
+# Create a system prompt. This one is borrowed from the ragnar docs
+system_prompt <- 
+  stringr::str_squish(
+"
+Before responding, retrieve relevant material from the knowledge store. Quote or paraphrase passages, clearly marking your own words versus the source. Provide a working link for every source cited, as well as any additional relevant links. Do not answer unless you have retrieved and cited a source.
+"
+  )
+
+# Create a chat object as before
+chat <- ellmer::chat_google_gemini(system_prompt)
+
+# Alternative code for Antrhopic
+# chat <- ellmer::chat_anthropic(system_prompt, model = "claude-haiku-4-5-20251001")
+
+# Alternative code for Ollama implementation
+# chat <- ellmer::chat_ollama(system_prompt, model = "llama3.1")
+
+# Register a 'retrieve' tool with ellmer
+ragnar_register_tool_retrieve(chat, store, top_k = 10)
+```
+
+Now, we can test the results.
+
+```{r}
+#| eval: false
+#| include: true
+chat$chat("What are some of the most surprising factual allegations described in these documents?")
+```
+
+Keep experimenting. How reliable are the answers? What could you do to improve the response?

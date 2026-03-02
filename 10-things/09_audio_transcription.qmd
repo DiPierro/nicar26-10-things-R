@@ -1,0 +1,40 @@
+---
+title: "9: Audio transcription"
+format: gfm
+---
+
+## Transcribing audio
+
+Transcribing interviews, public meetings and other reporting situations can be a huge time-saver. But if you don't have the budget for [Otter.ai](https://otter.ai/) -- or if you're working with confidential or sensitive audio -- you might want to use a local model. OpenAI's [Whisper](https://en.wikipedia.org/wiki/Whisper_(speech_recognition_system)) is an open source, automatic speech recognition and transcription model. There are lots of ways to use Whisper, including a [brand new implementation available in R](https://github.com/cornball-ai/whisper). 
+
+> Note: The `whisper` R package is brand new -- it was first committed to GitHub a few months ago and is actively being developed. It's available on [the Comprehensive R Archive Network, or CRAN](https://cran.r-project.org/web/packages/whisper/index.html), which distributes packages that meet certain quality standards. 
+>
+> Under the hood, it uses another useful R package, [`hfhub`](https://mlverse.github.io/hfhub/), whicih makes it easier to download files from [Hugging Face Hub](https://huggingface.co/docs/hub/en/index), a platform for open source models and datasets. 
+
+## Example: Transcribing oral arguments in court
+
+One thing you _don't_ need to transcribe right now are [oral arguments ](https://www.courtlistener.com/help/coverage/oral-arguments/) from the Supreme Court and the Federal Circuit Courts, which are available in a great archive managed by the [Free Law Project](https://free.law/).
+
+But as a test, let's see how a small version of the Whisper model compares to the Free Law Project's [transcript of a recent hearing](https://www.courtlistener.com/audio/102770/asucena-velazquez-olais-v-pamela-bondi/?type=oa&type=oa&q=&order_by=score+desc&argued_after=02%2F01%2F2026&page=2) in the Court of Appeals for the Seventh Circuit.
+
+The code to use `whisper` is straightforward.
+
+```{r}
+library(whisper)
+
+# Download the .mp3 file
+url <- "https://media.ca7.uscourts.gov/sound/external/ch.25-1244.25-1244_02_19_2026.mp3"
+olais_v_bondi <- curl::curl_download(url = url, destfile = "olais_v_bondi.mp3")
+
+# You can also access the file locally with
+# olais_v_bondi <- here::here("sample-data/olais_v_bondi.mp3")
+
+# Transcribe! This line will download a `tiny` version of Whisper the first time you run it.
+# Larger models are also available: base, small, medium and large-v3
+result <- transcribe(file = olais_v_bondi, model = "tiny", language = "en")
+
+# Check out the result
+cat(result$text)
+```
+
+Whoa! What's up with "that's why the" over and over again? This tiny version of `whisper` is not perfect and definitely will need to be double-checked. But given it's free and fairly fast.

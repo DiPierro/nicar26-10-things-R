@@ -1,0 +1,146 @@
+# 3: Extract text from images
+
+
+## Turning images into text
+
+Optical Character Recognition (OCR) is the way we convert images to text
+that a computer can read. If you’ve ever uploaded a scanned court
+document or even a photo of a handwritten note to a service such as
+[Google
+Pinpoint](https://support.google.com/pinpoint/answer/11948320?hl=en#:~:text=Search%20documents%20of%20many%20types,%22lune%22%20(French).)
+or
+[DocumentCloud](https://www.muckrock.com/news/archives/2023/oct/31/our-search-for-the-best-ocr-tool-in-2023-and-what-we-found/),
+you’ve used OCR already.s
+
+This demo uses the libraries `tesseract` and `magick` to show a few
+simple examples of how to use OCR in an R workflow.
+
+> [Tesseract](https://tesseract-ocr.github.io/tessdoc/#introduction), an
+> open source OCR engine, is part of the magic sauce behind
+> DocumentCloud’s [default OCR
+> feature](https://help.muckrock.com/Frequently-Asked-Questions-19ef889269638193975edda45199e14e#19ef889269638101a3ede4e85c9aea60).
+> If you’re looking for more specialized OCR, you can try other OCR
+> services including Amazon’s Textract, which incidentally you can [also
+> access from
+> R](https://github.com/paws-r/paws/blob/main/examples/textract.R).
+
+## Example: The Indianapolis Times
+
+Suppose you are doing an archival deep dive on Indianapolis journalism
+history. You might want to digitize copies of [The Indianapolis
+Times](https://en.wikipedia.org/wiki/Indianapolis_Times), a now-defunct
+evening newspaper. Per Wikipedia:
+
+> The Indianapolis Times was recognized for “crusading” journalism and
+> advocacy efforts. Story topics included voter fraud, state government
+> financial scandals, falsely reported crime statistics, and improving
+> public school lunches.
+>
+> Under the leadership of editor Boyd Gurley, the Indianapolis Times
+> received a Pulitzer Prize in 1928 for Public Service after it
+> successfully exposed Ku Klux Klan involvement in state politics,
+> including corruption between Governor Ed Jackson and Indiana Grand
+> Dragon D.C. Stephenson.
+
+The Times seems to have [a historical marker in its
+honor](https://www.in.gov/history/state-historical-markers/find-a-marker/the-indianapolis-times/)
+just around the corner from here on the 300 block of W. Maryland Street
+at Capitol Avenue. That historical marker will be our first test of
+`tesseract` and `magick`.
+
+``` r
+library(tesseract)
+library(magick)
+```
+
+    Linking to ImageMagick 6.9.13.29
+    Enabled features: cairo, fontconfig, freetype, heic, lcms, pango, raw, rsvg, webp
+    Disabled features: fftw, ghostscript, x11
+
+``` r
+# Source: https://www.in.gov/history/state-historical-markers/find-a-marker/the-indianapolis-times/
+indianapolis_times <- image_read("https://www.in.gov/history/images/4919791.jpg")
+
+plot(indianapolis_times)
+```
+
+![](03_text_from_images_files/figure-commonmark/unnamed-chunk-1-1.png)
+
+Naively, you can try to use `tesseract` to extract the text from the
+sign, but the results are not great.
+
+``` r
+indianapolis_times |> 
+  image_ocr() |> 
+  cat()
+```
+
+    SAS Ln ey Se "Re ae
+    Ree eee
+    oe ck oes
+    ‘The Indianapolis Times, bequn game
+    as The Indianapolis Sun in |=
+    = 1878, was published@here “FE
+    c, from 1924 until ft ceased |?
+    publication October Il, 1965. =
+    The Times wOn journalism's (¥
+    =f) highest award, the Pulitz ~
+    m Prize, in 1928 fo:
+    | ‘the Ku Klux kK
+    i i
+    ca
+
+Part of the problem is that the OCR engine mistakenly attempts to
+convert parts of the image that aren’t text into text. The color, shadow
+and size of the original image may also be causing problems. We can use
+`magick` to edit the image in hopes of achieving a better result.
+
+``` r
+indianapolis_times |> 
+  # Crop only to the part of the image with text
+  # The image is cropped to a 250 x 150 rectangle that starts 
+  # 55 pixels from the left and 75 pixels from the top
+  image_crop("250x150+55+75") |> 
+  # Convert from color to grayscale
+  image_convert(type = 'Grayscale') |>
+  # Sharpen the contrast on the image so that the text is more visible
+  image_contrast(sharpen = 1) |> 
+  image_ocr() |> 
+  cat()
+```
+
+    The Indianapolis Times, begun
+    as The indlangpoue Suh in
+    1878, was published here
+    from 1924 until it ceased
+
+    publication October Il, 1965.
+    The Times won journalism's
+    highest award, the Pulitzer
+    Prize, in 1928 for exposinc
+
+    #he Ku Klux Klan.
+
+That’s a little better. Now that you’ve cut your teeth with the
+historical marker, see if you can apply the same technique to a copy of
+the newspaper’s front page from Nov. 1, 1924.
+
+``` r
+front_page <- 
+  image_read(
+    "https://upload.wikimedia.org/wikipedia/commons/7/7d/Front_page_of_the_November_1%2C_1924_issue_of_the_Indianapolis_Times.png"  
+  )
+  
+plot(front_page)
+```
+
+![](03_text_from_images_files/figure-commonmark/unnamed-chunk-4-1.png)
+
+``` r
+# Hint: Try cropping and applying OCR to each newspaper column separately
+front_page |>
+  image_crop("550x800+1200+650") |> 
+  plot()
+```
+
+![](03_text_from_images_files/figure-commonmark/unnamed-chunk-5-1.png)
