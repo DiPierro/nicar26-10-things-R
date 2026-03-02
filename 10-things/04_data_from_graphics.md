@@ -49,9 +49,9 @@ Here’s what the final product looks like.
 library(ggplot2)
 
 file_fig_1_data <- here::here("sample-vis/caldat/fig_1")
-fig_1 <- readr::read_rds(file_fig_1_data)
+fig_1_data <- readr::read_rds(file_fig_1_data)
 
-fig_1$processed_data |> 
+fig_1_data$processed_data |> 
   ggplot(aes(x = x, y = y, group = id, color = id)) +
   geom_line()
 ```

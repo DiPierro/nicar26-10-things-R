@@ -19,8 +19,9 @@ To illustrate that point, the report contains the following static data visualiz
 
 ```{r}
 #| echo: false
-file_fig_1 <- here::here("sample-vis/fig_1.jpg")
-plot(magick::image_read(file_fig_1))
+url_fig_1 <- "https://github.com/DiPierro/nicar26-10-things-R/blob/main/sample-vis/fig_1.jpg?raw=true"
+fig_1 <- magick::image_read(url_fig_1)
+plot(fig_1)
 ```
 
 We can use [metaDigitise](https://github.com/daniel1noble/metaDigitise/tree/master?tab=readme-ov-file#example-of-how-it-works-) to trace both lines and reproduce the same graphic. 
@@ -40,9 +41,9 @@ Here's what the final product looks like.
 library(ggplot2)
 
 file_fig_1_data <- here::here("sample-vis/caldat/fig_1")
-fig_1 <- readr::read_rds(file_fig_1_data)
+fig_1_data <- readr::read_rds(file_fig_1_data)
 
-fig_1$processed_data |> 
+fig_1_data$processed_data |> 
   ggplot(aes(x = x, y = y, group = id, color = id)) +
   geom_line()
 ```
@@ -53,8 +54,9 @@ You can also use `metaDigitise` to process box plots, mean and error bars and hi
 
 ```{r}
 #| echo: false
-file_fig_2 <- here::here("sample-vis/fig_2.png")
-plot(magick::image_read(file_fig_2))
+url_fig_2 <- "https://github.com/DiPierro/nicar26-10-things-R/blob/main/sample-vis/fig_2.png?raw=true"
+fig_2 <- magick::image_read(url_fig_2)
+plot(fig_2)
 ```
 
 If the bars weren't labeled, could you use `metaDigitise` to estimate their heights? If we have a few minutes, we can fire up` metaDigitise` and give it a try.
