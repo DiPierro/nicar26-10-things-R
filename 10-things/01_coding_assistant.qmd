@@ -15,7 +15,7 @@ This module is a gentle introduction to two packages, [`ellmer`](https://ellmer.
 
 ## Working with open models
 
-> If you're following along from a personal laptop, you can try to download the specific packages you'll need for this part of the session: `install.packages(c("gander", "ellmer"))`.
+> If you're following along from a personal laptop, you can download the specific packages you'll need for this part of the session like this: `install.packages(c("gander", "ellmer"))`.
 
 [Ollama](https://ollama.com/) is a handy way to work with open, free models -- including many small enough that they can comfortably run on a laptop. You can get started by:
 
@@ -25,7 +25,7 @@ This module is a gentle introduction to two packages, [`ellmer`](https://ellmer.
 
 3) Downloading a model that's designed for coding. From the command line, type something like `ollama run qwen2.5-coder`, `ollama run qwen3-coder` or `ollama run devstral-small-2`. Or, you can choose another ollama model. I'm running the 7B size for Qwen2.5-Coder with `ollama run qwen2.5-coder:7b`.
 
-> The trade off between smaller and larger local models is that smaller models tend to generate code faster, while larger models generate better quality code.
+> In my experience, the trade off between smaller and larger local models is that smaller models tend to generate code faster, while larger models tend to generate better quality code.
 
 ## Taking a `gander`
 
@@ -67,12 +67,12 @@ Once you've saved your `.Rprofile`, restart R for the changes to take effect. (S
 
 Consider the built-in `diamonds` data set in R. Let's ask `gander`to run a simple analysis.
 
-To get started, highlight word `diamonds`. Then, type your new shortcut, `Ctrl+Cmd+G` on a Mac or `Ctrl+Alt+G` on a PC. A small window with the prompt "Enter text" should appear. Type in a command or question for `gander`. You might try something like:
+To get started, highlight the word `diamonds`. Then, type your new shortcut, `Ctrl+Cmd+G` on a Mac or `Ctrl+Alt+G` on a PC. A small window with the prompt "Enter text" should appear. Type in a command or question for `gander`. You might try something like:
 
 * Make a scatterplot of carat v price.
 * Summarize the median price for every carat and sort by price.
 
-> Note: If you're using a local model, it may take half a minute or so for `gander` to start producing text. Also, [chattiness](https://github.com/simonpcouch/gander/issues/30) is a known issue when editing code in a .qmd file. For better results, switch to the file 01_coding_assistant.R.
+> Note: If you're using a local model, it may take half a minute or so for `gander` to start writing code. Also, [chattiness](https://github.com/simonpcouch/gander/issues/30) is a known issue when working with gander to edit code in a .qmd file. For better results, switch to the file [01_coding_assistant.R](https://github.com/DiPierro/nicar26-10-things-R/blob/main/10-things/%2001_coding_assistant.R).
 
 ## What's happening under the hood
 
@@ -81,9 +81,9 @@ It's important to remember that when we use `gander`, we're giving a model acces
 Here's how the library's documentation describes what `gander` is doing:
 
 > gander automatically incorporates two kinds of context about your analyses under the hood:
-
+>
 > *Code context*: The assistant will automatically inform the model about the type of file you’re working in and relevant lines of code surrounding your cursor.
-
+>
 > *Environment context*: The assistant also interfaces directly with your global environment to describe the relevant data frames you have loaded, including their column names and type. This allows you to describe the analyses you’d like to carry out in plain language while gander takes care of describing your computational environment to the model.
 
 You can also start to familiarize yourself with the instructions `gander` is sending to the model by running `gander::gander_peek()`.
@@ -120,13 +120,14 @@ chat <-
 # Or chat inside this very document like this:
 chat$chat("How do I set an API key as an environmental variable?")
 ```
+
 > This example only scratches the surface of what is possible in `ellmer`. Take a look at the vignettes about [structured data extraction](https://ellmer.tidyverse.org/articles/structured-data.html) and [tool calling](https://ellmer.tidyverse.org/articles/tool-calling.html) for more ideas.
 
 ## More to explore
 
 That's it! Now you have a built-in code assistant and don't have to copy and paste boatloads of code into Claude or another LLM chat interface.
 
-If this brief introduction has you curious about other LLM and R integrations, know that there's much more to explore. You might use `gander` in combination with other R libraries such as `chores` (which is intended for repeat use cases, such as writing documentation) and [`btw`](https://posit-dev.github.io/btw/index.html) (which integrates context such as preferred coding style, environment, files and more into a chatbot). 
+If this brief introduction has you curious about other ways to integrate LLMs into R, know there's much more to explore. You might use `gander` in combination with other R libraries such as `chores` (which is intended for repeat use cases, such as writing documentation) and [`btw`](https://posit-dev.github.io/btw/index.html) (which integrates context such as preferred coding style, environment, files and more into a chatbot). 
 
 Finally, here's some further reading.
 
@@ -147,7 +148,6 @@ From the `tidyverse` blog:
 * [Three experiments in LLM code assist with RStudio and Positron](https://tidyverse.org/blog/2025/01/experiments-llm/):
 Probably already a little outdated. Note that `pal` is now renamed [`chores`](https://github.com/simonpcouch/chores).
 
-* [Learning the tidyverse with the help of AI tools
-](https://tidyverse.org/blog/2025/04/learn-tidyverse-ai/)
+* [Learning the tidyverse with the help of AI tools](https://tidyverse.org/blog/2025/04/learn-tidyverse-ai/)
 
 
