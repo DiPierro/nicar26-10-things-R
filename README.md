@@ -10,7 +10,7 @@ Though pitched at intermediate users interested in getting more mileage out of R
 
 Show off some of the unusual, unexpected or plain obscuRe (sorry) ways you use R in your newsroom: https://tinyurl.com/10-things-R 
 
-![](10-things-R-qr.svg)
+![](10-things-R-qr.svg){width=33% height=33%}
 
 I'll circulate the results in a tip sheet after the session.
 
