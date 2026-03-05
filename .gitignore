@@ -8,6 +8,7 @@
 .duckdb
 .mp3
 .DS_Store
+.html
 sample-pdfs.zip
 pdfs/
 sample-pdfs/
