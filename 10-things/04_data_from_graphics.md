@@ -6,7 +6,7 @@
 Sometimes government agencies, researchers and other sources publish
 static data visualizations without releasing the underlying data behind
 them. If you want to do your own analysis, it can be helpful to have a
-way to turn visual information into tabular data. That’s where the R
+way to turn visual information into data. That’s where the R
 package `metaDigitise` comes in handy.
 
 > If you’re following along from your own laptop, don’t forget to run
