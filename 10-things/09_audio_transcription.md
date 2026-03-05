@@ -19,7 +19,7 @@ implementation available in R](https://github.com/cornball-ai/whisper).
 > which distributes packages that meet certain quality standards.
 >
 > Under the hood, it uses another useful R package,
-> [`hfhub`](https://mlverse.github.io/hfhub/), whicih makes it easier to
+> [`hfhub`](https://mlverse.github.io/hfhub/), which makes it easier to
 > download files from [Hugging Face
 > Hub](https://huggingface.co/docs/hub/en/index), a platform for open
 > source models and datasets.

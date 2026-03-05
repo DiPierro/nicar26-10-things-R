@@ -9,7 +9,7 @@ Transcribing interviews, public meetings and other reporting situations can be a
 
 > Note: The `whisper` R package is brand new -- it was first committed to GitHub a few months ago and is actively being developed. It's available on [the Comprehensive R Archive Network, or CRAN](https://cran.r-project.org/web/packages/whisper/index.html), which distributes packages that meet certain quality standards. 
 >
-> Under the hood, it uses another useful R package, [`hfhub`](https://mlverse.github.io/hfhub/), whicih makes it easier to download files from [Hugging Face Hub](https://huggingface.co/docs/hub/en/index), a platform for open source models and datasets. 
+> Under the hood, it uses another useful R package, [`hfhub`](https://mlverse.github.io/hfhub/), which makes it easier to download files from [Hugging Face Hub](https://huggingface.co/docs/hub/en/index), a platform for open source models and datasets. 
 
 ## Example: Transcribing oral arguments in court
 
