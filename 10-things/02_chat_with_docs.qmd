@@ -7,9 +7,9 @@ format: gfm
 
 We all know that large language models (LLMs) can hallucinate, give generic answers to specific questions or extrapolate from out-of-date information. The idea behind Retrieval-Augmented Generation (RAG) is to combine what the LLM already knows -- the gobs of data it was trained on -- with specific new context we send to it, such as documents or data. This way, when we ask a question, the LLM can retrieve relevant information from the new context we've provided.
 
-In this module, we'll walk through a brief example that demonstrates how to use RAG to chat with documents using the R package `ragnar`.
+Let's walk through a brief example that demonstrates how to use RAG to chat with documents using the R package `ragnar`.
 
-> If you're on your laptop, don't forget to install ellmer and ragnar: install.packages("ragnar", "ellmer"). And check out `01_coding_assistant.qmd` for a refresher on downloading Ollama.
+> If you're on your laptop, don't forget to install ellmer and ragnar: install.packages("ragnar", "ellmer"). And check out [`01_coding_assistant.md`](https://github.com/DiPierro/nicar26-10-things-R/blob/main/10-things/01_coding_assistant.md) for a refresher on downloading Ollama.
 
 ## Example: California's Bureau for Private Postsecondary Education
 
