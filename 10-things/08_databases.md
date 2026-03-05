@@ -42,6 +42,10 @@ If you were working with `dplyr` only, you might do something like this.
 ``` r
 ## Run this code during demo ##
 # fjc_old <- readr::read_csv(here::here("sample_fjc.csv"))
+
+## Or you can read it from the repo
+# url_fjc <- "https://raw.githubusercontent.com/DiPierro/nicar26-10-things-R/refs/heads/main/sample-data/sample_fjc.csv"
+# fjc_old <- readr::read_csv(url_fjc)
 ```
 
 Here’s the full dataset.
