@@ -13,13 +13,13 @@ code.
 > create an [OpenAI API key](https://platform.openai.com/api-keys) and
 > to buy a few credits. Then, you can add it to this project’s .Renviron
 > file by using the command `usethis::edit_r_environ(scope = "project")`
-> and setting a environmental variable, `OPEN_AI_KEY=your_api_key_here`.
+> and setting an environmental variable,
+> `OPEN_AI_KEY=your_api_key_here`.
 
 ## Demo: The diamonds data, revisited
 
 Let’s revisit the `diamonds` built-in data we were using earlier with
-`gander`. This time, we’ll try out a few visualizations aloud with
-ChatGPT.
+`gander`. This time, we’ll try a few visualizations aloud with ChatGPT.
 
 ``` r
 # Launch ggbot2
