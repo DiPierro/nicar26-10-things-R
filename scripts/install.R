@@ -12,7 +12,6 @@ packages <-
     "here", 
     "gander", 
     "ggplot2", 
-    "ggbot2", 
     "magick", 
     "metaDigitise", 
     "pak",
@@ -31,3 +30,4 @@ packages <-
 
 # Installs
 install.packages(packages, repos = "http://cran.us.r-project.org")
+pak::pak("tidyverse/ggbot2")
