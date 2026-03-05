@@ -11,8 +11,8 @@ combine what the LLM already knows – the gobs of data it was trained on
 This way, when we ask a question, the LLM can retrieve relevant
 information from the new context we’ve provided.
 
-In this module, we’ll walk through a brief example that demonstrates how
-to use RAG to chat with documents using the R package `ragnar`.
+Let's walk through a brief example that demonstrates how to use RAG to 
+chat with documents using the R package `ragnar`.
 
 > If you’re on your laptop, don’t forget to install ellmer and ragnar:
 > install.packages(“ragnar”, “ellmer”). And check out
