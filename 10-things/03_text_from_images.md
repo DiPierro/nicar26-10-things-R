@@ -10,7 +10,7 @@ document or even a photo of a handwritten note to a service such as
 Pinpoint](https://support.google.com/pinpoint/answer/11948320?hl=en#:~:text=Search%20documents%20of%20many%20types,%22lune%22%20(French).)
 or
 [DocumentCloud](https://www.muckrock.com/news/archives/2023/oct/31/our-search-for-the-best-ocr-tool-in-2023-and-what-we-found/),
-you’ve used OCR already.s
+you’ve used OCR already.
 
 This demo uses the libraries `tesseract` and `magick` to show a few
 simple examples of how to use OCR in an R workflow.
@@ -65,6 +65,8 @@ plot(indianapolis_times)
 ```
 
 ![](03_text_from_images_files/figure-commonmark/unnamed-chunk-1-1.png)
+
+![](%22https://www.in.gov/history/images/4919791.jpg%22)
 
 Naively, you can try to use `tesseract` to extract the text from the
 sign, but the results are not great.
@@ -135,6 +137,8 @@ plot(front_page)
 ```
 
 ![](03_text_from_images_files/figure-commonmark/unnamed-chunk-4-1.png)
+
+![](%22https://upload.wikimedia.org/wikipedia/commons/7/7d/Front_page_of_the_November_1%2C_1924_issue_of_the_Indianapolis_Times.png%22)
 
 ``` r
 # Hint: Try cropping and applying OCR to each newspaper column separately
